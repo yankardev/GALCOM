@@ -80,7 +80,9 @@ contraseña: cajero123
 - DNI/telefonía/fechas/combos con validaciones más claras.
 - Modales y tablas CRUD con buscador y estados.
 - Vencimiento de cuentas sugerido a +1 mes y editable.
-- Egresos con total calculado desde subtotal + impuesto y recalculado en backend.
+- Egresos con ingreso de monto y tratamiento del IGV
+  (incluido, adicional o no aplica), con cálculo automático
+  de subtotal, impuesto y total, y validación nuevamente en backend.
 - JWT, guards/interceptor, autorización backend por rol.
 - Cobranza, canje bancario, recibos correlativos, ingresos, egresos, CSV, reportes XLSX y dashboard.
 
