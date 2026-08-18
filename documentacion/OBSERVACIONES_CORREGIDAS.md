@@ -35,10 +35,11 @@ Esta versión incorpora las observaciones funcionales y de usabilidad detectadas
 
 ## Egresos
 - Número de documento, proveedor, fecha y motivo se validan antes del envío.
-- El usuario ingresa `Subtotal` e `Impuesto`; **Monto total = Subtotal + Impuesto** se calcula automáticamente y se muestra como solo lectura.
-- El backend vuelve a calcular el monto total para evitar inconsistencias o manipulación desde el frontend.
-- Si no existe impuesto se usa `0`.
-- Se conserva la importación CSV; al registrar, el backend vuelve a calcular el total desde subtotal e impuesto.
+- El usuario ingresa un único **monto del comprobante** y selecciona el tratamiento del IGV: `INCLUIDO`, `ADICIONAL` o `NO_APLICA`.
+- El frontend calcula automáticamente subtotal, impuesto y monto total según la opción elegida y los muestra como valores calculados.
+- El backend vuelve a calcular el monto total a partir de subtotal e impuesto para evitar inconsistencias o manipulación desde el frontend.
+- Se evita registrar el mismo comprobante para el mismo proveedor mediante validación de aplicación y restricción única en la base de datos.
+- Se conserva la importación CSV; si aparece un registro inválido o duplicado, la importación se cancela y la transacción se revierte.
 
 ## Diseño
 - Se conserva la identidad azul GALCOM con variantes sobrias.
