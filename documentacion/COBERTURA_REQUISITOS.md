@@ -26,7 +26,7 @@ Esta matriz relaciona la Especificación de Requisitos con la implementación de
 | RF-27 | registro individual de egresos | Implementado |
 | RF-28 | `POST /egresos/importar` para archivo CSV | Implementado |
 | RF-29 | recibos de INGRESO por fecha + voucher | Implementado |
-| RF-30 | egresos por período + procesar/anular | Implementado |
+| RF-30 | egresos por mes + ver voucher + procesar/anular | Implementado |
 | RF-31 | recibos BANCARIO por fecha + voucher | Implementado |
 | RF-32 | reportes XLSX diarios, totales y mensuales | Implementado |
 | RF-33 | XLSX de socios, no socios, egresos y bancos | Implementado |
