@@ -1,0 +1,150 @@
+.tabs {
+  display: flex;
+  gap: 5px;
+  padding: 5px;
+  background: #e9eef6;
+  border-radius: 12px;
+  width: max-content;
+  margin-bottom: 16px;
+}
+.tabs button {
+  border: 0;
+  background: transparent;
+  color: var(--ink-500);
+  padding: 9px 14px;
+  border-radius: 9px;
+  font-size: 12px;
+  font-weight: 800;
+}
+.tabs button.active {
+  background: #fff;
+  color: var(--galcom-800);
+  box-shadow: 0 3px 10px rgba(16, 37, 74, 0.08);
+}
+.generator-card {
+  padding: 22px;
+}
+.section-head,
+.table-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+.section-head h2,
+.table-head h2 {
+  margin: 0;
+  font-size: 17px;
+}
+.section-head p,
+.table-head p {
+  margin: 5px 0 0;
+  color: var(--ink-500);
+  font-size: 12px;
+}
+.info-chip {
+  background: var(--galcom-100);
+  color: var(--galcom-700);
+  padding: 7px 10px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 900;
+}
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 15px;
+}
+label > span,
+.field-block > span {
+  display: block;
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--ink-700);
+  margin-bottom: 7px;
+}
+.actions {
+  margin-top: 19px;
+  display: flex;
+  gap: 8px;
+}
+.field-block,
+.toggle-field {
+  padding: 10px 0;
+}
+.checks {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.checks label {
+  font-size: 12px;
+  color: var(--ink-700);
+  font-weight: 650;
+}
+.toggle-field > div {
+  font-size: 12px;
+  color: var(--ink-700);
+  padding-top: 5px;
+}
+.accounts-card {
+  overflow: hidden;
+  margin-top: 18px;
+}
+.table-head {
+  padding: 20px 22px 0;
+}
+.filters {
+  display: flex;
+  gap: 8px;
+}
+.filters select {
+  width: 155px;
+}
+.filters input {
+  width: 230px;
+}
+.data-table th:first-child,
+.data-table td:first-child {
+  padding-left: 22px;
+}
+.data-table th:last-child,
+.data-table td:last-child {
+  padding-right: 22px;
+}
+@media (max-width: 1100px) {
+  .form-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 700px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+  .tabs {
+    width: 100%;
+    overflow: auto;
+  }
+  .tabs button {
+    white-space: nowrap;
+  }
+  .table-head {
+    flex-direction: column;
+  }
+  .filters {
+    width: 100%;
+    flex-direction: column;
+  }
+  .filters select,
+  .filters input {
+    width: 100%;
+  }
+}
+
+.date-help {
+  display: block;
+  margin-top: 5px;
+  color: var(--ink-400);
+  font-size: 10px;
+}

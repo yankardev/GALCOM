@@ -19,4 +19,6 @@ public interface IPuestoRepository extends JpaRepository<PuestoEntity, Long> {
 
     @Query("SELECT p FROM PuestoEntity p WHERE p.estado = :estado")
     List<PuestoEntity> findByEstado(@Param("estado") String estado);
+
+    long countByEstado(String estado);
 }

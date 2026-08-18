@@ -1,0 +1,282 @@
+<div class="page-title">
+  <div>
+    <h1>Cuentas por cobrar</h1>
+    <p>Generación individual, masiva y seguimiento de obligaciones</p>
+  </div>
+  <span class="badge warning">{{ rows().length }} cuentas</span>
+</div>
+
+<div class="tabs">
+  <button [class.active]="tab() === 'individual'" (click)="setTab('individual')">
+    Cuenta individual</button
+  ><button [class.active]="tab() === 'puestos'" (click)="setTab('puestos')">
+    Generar por puestos</button
+  ><button [class.active]="tab() === 'socios'" (click)="setTab('socios')">
+    Generar por socios
+  </button>
+</div>
+
+<section class="card generator-card">
+  @if (tab() === 'individual') {
+    <div class="section-head">
+      <div>
+        <h2>Nueva cuenta individual</h2>
+        <p>El servicio determina si el cargo corresponde a un puesto o a un socio.</p>
+      </div>
+    </div>
+    <form [formGroup]="individual" (ngSubmit)="guardarIndividual()">
+      <div class="form-grid">
+        <label
+          ><span>Servicio *</span
+          ><select class="control" formControlName="servicioId">
+            <option [ngValue]="null" disabled>Seleccione una servicio...</option>
+            @for (s of servicios(); track s.id) {
+              <option [ngValue]="s.id">
+                {{ s.nombre }} · {{ s.cargoA }} · {{ s.tipoCalculo }}
+              </option>
+            }
+          </select></label
+        >
+        <label
+          ><span>{{ servicioSeleccionado()?.cargoA === 'SOCIO' ? 'Socio' : 'Puesto' }} *</span
+          ><select class="control" formControlName="destinoId">
+            <option [ngValue]="null" disabled>Seleccione un puesto...</option>
+            @for (r of responsables(); track r.id) {
+              <option [ngValue]="r.id">{{ r.label }}</option>
+            }
+          </select></label
+        >
+        <label
+          ><span>Período *</span
+          ><input class="control" formControlName="periodo" placeholder="2026-08"
+        /></label>
+        @if (servicioSeleccionado()?.tipoCalculo === 'CONSUMO') {
+          <label
+            ><span>Lectura inicial *</span
+            ><input
+              class="control"
+              type="number"
+              step="0.01"
+              formControlName="lecturaInicial" /></label
+          ><label
+            ><span>Lectura final *</span
+            ><input class="control" type="number" step="0.01" formControlName="lecturaFinal"
+          /></label>
+        } @else {
+          <label
+            ><span>Monto (opcional)</span
+            ><input
+              class="control"
+              type="number"
+              step="0.01"
+              formControlName="monto"
+              [placeholder]="servicioSeleccionado()?.costo?.toString() || ''"
+          /></label>
+        }
+        <label
+          ><span>Fecha de emisión *</span
+          ><input class="control" type="date" formControlName="fechaEmision" /><small
+            class="date-help"
+            >Al cambiarla, GALCOM propone el vencimiento un mes después.</small
+          ></label
+        ><label
+          ><span>Fecha de vencimiento *</span
+          ><input class="control" type="date" formControlName="fechaVencimiento" /><small
+            class="date-help"
+            >Sugerida automáticamente y editable.</small
+          ></label
+        >
+      </div>
+      <div class="actions">
+        <button class="btn primary" [disabled]="saving()">
+          {{ saving() ? 'Procesando...' : 'Generar cuenta' }}
+        </button>
+      </div>
+    </form>
+  }
+  @if (tab() === 'puestos') {
+    <div class="section-head">
+      <div>
+        <h2>Generación masiva por puestos</h2>
+        <p>
+          Se crearán obligaciones únicamente para puestos con estado OCUPADO, evitando duplicados.
+        </p>
+      </div>
+    </div>
+    <form [formGroup]="masivoPuestos" (ngSubmit)="generarPuestos()">
+      <div class="form-grid">
+        <label
+          ><span>Servicio fijo para puesto *</span
+          ><select class="control" formControlName="servicioId">
+            <option [ngValue]="null" disabled>Seleccione una servicio...</option>
+            @for (s of serviciosPuesto(); track s.id) {
+              <option [ngValue]="s.id">{{ s.nombre }} · S/ {{ s.costo }}</option>
+            }
+          </select></label
+        ><label
+          ><span>Período *</span
+          ><input class="control" formControlName="periodo" placeholder="2026-08" /></label
+        ><label
+          ><span>Monto (opcional)</span
+          ><input class="control" type="number" step="0.01" formControlName="monto" /></label
+        ><label
+          ><span>Emisión *</span
+          ><input class="control" type="date" formControlName="fechaEmision" /></label
+        ><label
+          ><span>Vencimiento *</span
+          ><input class="control" type="date" formControlName="fechaVencimiento" /><small
+            class="date-help"
+            >Sugerido a +1 mes; puede modificarse.</small
+          ></label
+        >
+      </div>
+      <div class="actions">
+        <button class="btn primary" [disabled]="saving()">Generar para puestos</button>
+      </div>
+    </form>
+  }
+  @if (tab() === 'socios') {
+    <div class="section-head">
+      <div>
+        <h2>Generación masiva por socios</h2>
+        <p>
+          Seleccione las etapas y active socios únicos para evitar repetidos por nombres y
+          apellidos.
+        </p>
+      </div>
+      <span class="info-chip">RF-18</span>
+    </div>
+    <form [formGroup]="masivoSocios" (ngSubmit)="generarSocios()">
+      <div class="form-grid">
+        <label
+          ><span>Servicio fijo para socio *</span
+          ><select class="control" formControlName="servicioId">
+            <option [ngValue]="null" disabled>Seleccione una servicio...</option>
+            @for (s of serviciosSocio(); track s.id) {
+              <option [ngValue]="s.id">{{ s.nombre }} · S/ {{ s.costo }}</option>
+            }
+          </select></label
+        ><label
+          ><span>Período *</span
+          ><input class="control" formControlName="periodo" placeholder="2026-08" /></label
+        ><label
+          ><span>Monto (opcional)</span
+          ><input class="control" type="number" step="0.01" formControlName="monto" /></label
+        ><label
+          ><span>Emisión *</span
+          ><input class="control" type="date" formControlName="fechaEmision" /></label
+        ><label
+          ><span>Vencimiento *</span
+          ><input class="control" type="date" formControlName="fechaVencimiento" /><small
+            class="date-help"
+            >Sugerido a +1 mes; puede modificarse.</small
+          ></label
+        >
+        <div class="field-block">
+          <span>Etapas *</span>
+          <div class="checks">
+            @for (e of [1, 2, 3]; track e) {
+              <label
+                ><input
+                  type="checkbox"
+                  [checked]="tieneEtapa(e)"
+                  (change)="toggleEtapa(e, $any($event.target).checked)"
+                />
+                Etapa {{ e }}</label
+              >
+            }
+          </div>
+        </div>
+        <label class="toggle-field"
+          ><span>Control de duplicados</span>
+          <div>
+            <input type="checkbox" formControlName="sociosUnicos" /> <b>Solo socios únicos</b>
+          </div></label
+        >
+      </div>
+      <div class="actions">
+        <button class="btn primary" [disabled]="saving()">Generar para socios</button>
+      </div>
+    </form>
+  }
+</section>
+
+@if (message()) {
+  <p class="notice ok">{{ message() }}</p>
+}
+@if (error()) {
+  <p class="notice bad">{{ error() }}</p>
+}
+
+<section class="card accounts-card">
+  <div class="table-head">
+    <div>
+      <h2>Obligaciones registradas</h2>
+      <p>Estado actual de las cuentas de socios y puestos.</p>
+    </div>
+    <div class="filters">
+      <select
+        class="control"
+        [value]="estadoFiltro"
+        (change)="estadoFiltro = $any($event.target).value"
+      >
+        <option>TODOS</option>
+        <option>PENDIENTE</option>
+        <option>ABONADA</option>
+        <option>EXONERADA</option>
+        <option>ANULADA</option></select
+      ><input
+        class="control"
+        type="search"
+        placeholder="Buscar..."
+        [value]="query"
+        (input)="query = $any($event.target).value"
+      />
+    </div>
+  </div>
+  <div class="table-wrap">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Servicio</th>
+          <th>Responsable</th>
+          <th>Período</th>
+          <th>Emisión</th>
+          <th>Vencimiento</th>
+          <th>Monto</th>
+          <th>Estado</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (x of filtered; track x.id) {
+          <tr>
+            <td>
+              <strong>{{ x.servicioNombre }}</strong>
+            </td>
+            <td>{{ x.socioNombre || 'Puesto ' + x.puestoNumero }}</td>
+            <td>{{ x.periodo }}</td>
+            <td>{{ x.fechaEmision }}</td>
+            <td>{{ x.fechaVencimiento }}</td>
+            <td class="money">S/ {{ x.monto | number: '1.2-2' }}</td>
+            <td>
+              <span
+                class="badge"
+                [class.success]="estadoClase(x.estado) === 'success'"
+                [class.warning]="estadoClase(x.estado) === 'warning'"
+                [class.info]="estadoClase(x.estado) === 'info'"
+                [class.danger]="estadoClase(x.estado) === 'danger'"
+                >{{ x.estado }}</span
+              >
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="7" class="empty">
+              {{ loading() ? 'Cargando...' : 'No hay cuentas para mostrar.' }}
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</section>

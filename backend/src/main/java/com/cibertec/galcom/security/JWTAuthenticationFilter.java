@@ -7,6 +7,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -20,6 +21,8 @@ import static com.cibertec.galcom.security.Constants.*;
 
 @Component
 public class JWTAuthenticationFilter extends OncePerRequestFilter {
+    @Value("${security.jwt.secret}")
+    private String secretText;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
@@ -30,7 +33,7 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
             if (authHeader != null && authHeader.startsWith(TOKEN_PREFIX)) {
                 String token = authHeader.substring(TOKEN_PREFIX.length());
                 Claims claims = Jwts.parserBuilder()
-                        .setSigningKey(getSigningKey(SECRET_TEXT))
+                        .setSigningKey(getSigningKey(secretText))
                         .build()
                         .parseClaimsJws(token)
                         .getBody();

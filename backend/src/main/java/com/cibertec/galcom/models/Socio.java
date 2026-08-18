@@ -13,7 +13,6 @@ import java.time.LocalDate;
 public class Socio {
     private Long id;
 
-    @NotBlank(message = "El código es obligatorio")
     @Size(max = 20)
     private String codigo;
 
@@ -28,7 +27,7 @@ public class Socio {
     @Size(max = 100)
     private String apellidos;
 
-    @Size(max = 20)
+    @Pattern(regexp = "^$|^[0-9]{9}$", message = "El teléfono debe tener 9 dígitos")
     private String telefono;
 
     @Email(message = "El correo no tiene un formato válido")
@@ -37,6 +36,7 @@ public class Socio {
     @Size(max = 50)
     private String accion;
 
+    @NotNull(message = "La etapa es obligatoria")
     @Min(value = 1, message = "La etapa mínima es 1")
     @Max(value = 3, message = "La etapa máxima es 3")
     private Integer etapa;

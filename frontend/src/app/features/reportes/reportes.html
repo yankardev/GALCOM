@@ -1,0 +1,29 @@
+<div class="page-title">
+    <div>
+        <h1>Reportes</h1>
+        <p>Exportación de información diaria, mensual y administrativa en Excel</p>
+    </div>
+</div>
+<div class="report-grid">@for(o of options;track o.value){<button class="report-card" [class.active]="tipo===o.value"
+        (click)="tipo=o.value"><span class="report-icon">▥</span>
+        <div><strong>{{o.label}}</strong><small>{{o.description}}</small></div><i>{{tipo===o.value?'✓':'›'}}</i>
+    </button>}</div>
+<section class="card export-card">
+    <div>
+        <h2>Parámetros del reporte</h2>
+        <p>{{option().description}}</p>
+    </div>
+    <div class="params">@if(option().period==='day'){<label><span>Fecha</span><input class="control" type="date"
+                [(ngModel)]="fecha"></label>}@if(option().period==='month'){<label><span>Mes</span><input
+                class="control" type="month" [(ngModel)]="mes"></label>}<button class="btn primary"
+            (click)="descargar()" [disabled]="downloading()">{{downloading()?'Generando archivo...':'Descargar
+            XLSX'}}</button></div>
+</section>
+@if(error()){<p class="notice bad">{{error()}}</p>}
+<section class="info-panel">
+    <div class="info-icon">i</div>
+    <div><strong>Reportes de GALCOM</strong>
+        <p>Los archivos se generan desde el backend con los datos persistidos en MySQL. Los reportes diarios utilizan
+            una fecha y los mensuales un período AAAA-MM, según la regla RN-07.</p>
+    </div>
+</section>

@@ -54,4 +54,8 @@ public class CuentaPorCobrarEntity {
 
     @Column(nullable = false, length = 15)
     private String estado;
+
+    @Version
+    @Column(nullable = false)
+    private Long version;
 }

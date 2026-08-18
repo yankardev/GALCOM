@@ -1,0 +1,60 @@
+<div class="page-title">
+  <div><h1>{{ config.title }}</h1><p>{{ config.subtitle || 'Administración y mantenimiento de información' }}</p></div>
+  <span class="records-chip">{{ rows().length }} registros</span>
+</div>
+@if(message()){<p class="notice ok" role="status">{{message()}}</p>}
+@if(error() && !modalOpen()){<p class="notice bad" role="alert">{{error()}}</p>}
+<section class="card table-card">
+  <div class="table-head">
+    <div><h2>Registros</h2><p>Busque y administre la información existente.</p></div>
+    <div class="table-tools">
+      <div class="search-box"><span aria-hidden="true">⌕</span><input type="search" aria-label="Buscar registros" placeholder="Buscar por código, nombre o documento..." [value]="query" (input)="query=$any($event.target).value"></div>
+      <button class="btn primary new-btn" type="button" (click)="openCreate()">+ {{ config.newLabel || 'Nuevo registro' }}</button>
+    </div>
+  </div>
+  <div class="table-wrap"><table class="data-table"><thead><tr>@for(f of tableFields;track f.key){<th>{{f.label}}</th>}<th>Acciones</th></tr></thead><tbody>
+    @for(row of filtered;track row.id){<tr>@for(f of tableFields;track f.key){<td>@if(isStatusField(f)){<span class="badge" [class]="'badge ' + badgeClass(row,f)">{{display(row,f)}}</span>}@else{ {{display(row,f)}} }</td>}<td class="row-actions"><button class="icon-btn edit" type="button" title="Editar" aria-label="Editar registro" (click)="edit(row)">✎</button><button class="icon-btn delete" type="button" title="Eliminar" aria-label="Eliminar registro" (click)="remove(row)">⌫</button></td></tr>}
+    @empty{<tr><td [attr.colspan]="tableFields.length+1" class="empty">{{loading()?'Cargando información...':'No hay registros para mostrar.'}}</td></tr>}
+  </tbody></table></div>
+  <div class="table-footer"><span>Mostrando {{ filtered.length }} de {{ rows().length }} registros</span></div>
+</section>
+@if(modalOpen()){
+  <div class="modal-backdrop" (click)="cancel()">
+    <section class="modal-card" role="dialog" aria-modal="true" (click)="$event.stopPropagation()">
+      <div class="modal-head"><div><span class="eyebrow">{{ editingId ? 'ACTUALIZACIÓN' : 'NUEVO REGISTRO' }}</span><h2>{{ editingId ? 'Editar registro' : (config.newLabel || 'Nuevo registro') }}</h2><p>Complete la información solicitada. Los campos con * son obligatorios.</p></div><button class="close-btn" type="button" aria-label="Cerrar" (click)="cancel()">×</button></div>
+      @if(error()){<p class="notice bad modal-notice" role="alert">{{error()}}</p>}
+      <form [formGroup]="form" (ngSubmit)="save()">
+        <div class="form-grid">
+          @for(f of formFields; track f.key) {
+            <label [class.generated-field]="f.generated"><span>{{ f.label }}{{ f.required && !f.generated ? ' *' : '' }}</span>
+              @if(f.generated){
+                <input class="control generated-control" type="text" [formControlName]="f.key" readonly>
+                <small class="helper">Generado automáticamente por GALCOM.</small>
+              }
+              @else if (f.type === 'boolean') {
+                <select class="control" [formControlName]="f.key">
+                  <option [ngValue]="true">Activo</option>
+                  <option [ngValue]="false">Inactivo</option>
+                </select>
+              }
+              @else if (f.type === 'select') {
+                <select class="control" [formControlName]="f.key">
+                  @if(f.required){<option [ngValue]="null" disabled>{{ f.placeholder || 'Seleccione una opción...' }}</option>}
+                  @else if(f.allowEmpty){<option [ngValue]="null">{{ f.emptyLabel || 'Sin asignar' }}</option>}
+                  @else{<option [ngValue]="null" disabled>{{ f.placeholder || 'Seleccione una opción...' }}</option>}
+                  @for(o of options(f);track o.value){<option [ngValue]="o.value">{{o.label}}</option>}
+                </select>
+              }
+              @else {
+                <input class="control" [type]="f.type || 'text'" [placeholder]="f.placeholder || ''" [formControlName]="f.key" [attr.min]="f.min ?? null" [attr.max]="f.max ?? null" [attr.maxlength]="f.maxLength ?? null">
+              }
+              @if(f.helper){<small class="helper">{{f.helper}}</small>}
+              @if(form.controls[f.key].invalid && form.controls[f.key].touched){<small class="validation">{{ validationMessage(f) }}</small>}
+            </label>
+          }
+        </div>
+        <div class="modal-actions"><button class="btn secondary" type="button" (click)="cancel()">Cancelar</button><button class="btn primary" type="submit" [disabled]="saving()">{{saving()?'Guardando...':editingId?'Guardar cambios':'Guardar registro'}}</button></div>
+      </form>
+    </section>
+  </div>
+}

@@ -29,7 +29,7 @@ public class Puesto {
     @Size(max = 20)
     private String inquilinoDocumento;
 
-    @Size(max = 20)
+    @Pattern(regexp = "^$|^[0-9]{9}$", message = "El teléfono del inquilino debe tener 9 dígitos")
     private String inquilinoTelefono;
 
     private LocalDate vigenciaInicio;

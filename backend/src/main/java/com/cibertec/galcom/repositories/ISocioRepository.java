@@ -11,6 +11,10 @@ import java.util.List;
 @Repository
 public interface ISocioRepository extends JpaRepository<SocioEntity, Long> {
 
+    boolean existsByDni(String dni);
+
+    boolean existsByDniAndIdNot(String dni, Long id);
+
     @Query("SELECT s FROM SocioEntity s WHERE s.etapa IN :etapas")
     List<SocioEntity> findByEtapas(@Param("etapas") List<Integer> etapas);
 }

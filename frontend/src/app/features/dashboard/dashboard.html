@@ -1,0 +1,54 @@
+<div class="page-title">
+  <div><h1>Dashboard</h1><p>Resumen operativo y financiero de GALCOM</p></div>
+  <div class="period-chip"><span></span> Información actualizada</div>
+</div>
+
+@if (error()) { <p class="notice bad">{{ error() }}</p> }
+
+<div class="stats-grid">
+  <article class="stat-card accent-blue">
+    <div class="stat-top"><span class="stat-icon">◎</span><span class="trend">Socios</span></div>
+    <strong>{{ data().socios }}</strong><small>socios registrados</small>
+  </article>
+  <article class="stat-card accent-cyan">
+    <div class="stat-top"><span class="stat-icon">▤</span><span class="trend">{{ ocupacion() }}% ocupación</span></div>
+    <strong>{{ data().puestosOcupados }} / {{ data().puestos }}</strong><small>puestos ocupados</small>
+  </article>
+  <article class="stat-card accent-amber">
+    <div class="stat-top"><span class="stat-icon">!</span><span class="trend">Pendientes</span></div>
+    <strong>{{ data().cuentasPendientes }}</strong><small>cuentas por cobrar</small>
+  </article>
+  <article class="stat-card accent-violet">
+    <div class="stat-top"><span class="stat-icon">S/</span><span class="trend">Cartera</span></div>
+    <strong>S/ {{ data().porCobrar | number:'1.2-2' }}</strong><small>saldo pendiente</small>
+  </article>
+</div>
+
+<div class="dashboard-grid">
+  <section class="card finance-card">
+    <div class="card-heading"><div><h2>Flujo del mes</h2><p>Ingresos emitidos frente a egresos procesados</p></div><span class="balance" [class.negative]="balance() < 0">S/ {{ balance() | number:'1.2-2' }}</span></div>
+    <div class="flow-row"><div class="flow-label"><span>Recaudación</span><strong>S/ {{ data().recaudadoMes | number:'1.2-2' }}</strong></div><div class="bar"><span class="income" [style.width.%]="ancho(data().recaudadoMes)"></span></div></div>
+    <div class="flow-row"><div class="flow-label"><span>Egresos</span><strong>S/ {{ data().egresosMes | number:'1.2-2' }}</strong></div><div class="bar"><span class="expense" [style.width.%]="ancho(data().egresosMes)"></span></div></div>
+    <div class="legend"><span><i class="income-dot"></i>Ingresos</span><span><i class="expense-dot"></i>Egresos</span></div>
+  </section>
+
+  <section class="card occupancy-card">
+    <div class="card-heading"><div><h2>Ocupación comercial</h2><p>Disponibilidad actual de puestos</p></div></div>
+    <div class="donut" [style.--p]="ocupacion()"><div><strong>{{ ocupacion() }}%</strong><small>ocupado</small></div></div>
+    <div class="occupancy-data"><span><b>{{ data().puestosOcupados }}</b> ocupados</span><span><b>{{ data().puestos - data().puestosOcupados }}</b> disponibles / otros</span></div>
+  </section>
+</div>
+
+<section class="card recent-card">
+  <div class="card-heading"><div><h2>Últimos recibos</h2><p>Movimientos emitidos recientemente</p></div><a href="/recibos">Ver comprobantes →</a></div>
+  <div class="table-wrap">
+    <table class="data-table">
+      <thead><tr><th>Correlativo</th><th>Responsable</th><th>Tipo</th><th>Fecha</th><th>Método</th><th>Monto</th><th>Estado</th></tr></thead>
+      <tbody>
+        @for (r of data().ultimosRecibos; track r.id) {
+          <tr><td><strong>{{ r.numeroCorrelativo }}</strong></td><td>{{ responsable(r) }}</td><td>{{ r.tipo }}</td><td>{{ r.fecha | date:'dd/MM/yyyy HH:mm' }}</td><td>{{ r.metodoPago || '—' }}</td><td class="money">S/ {{ r.montoTotal | number:'1.2-2' }}</td><td><span class="badge success">{{ r.estado }}</span></td></tr>
+        } @empty { <tr><td colspan="7" class="empty">{{ loading() ? 'Cargando...' : 'Todavía no hay recibos emitidos.' }}</td></tr> }
+      </tbody>
+    </table>
+  </div>
+</section>

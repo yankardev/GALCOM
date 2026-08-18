@@ -1,0 +1,3 @@
+tipoDocumento,numeroDocumento,proveedor,fecha,subtotal,impuesto,montoTotal,documentoAsociado,motivo,bancoId
+FACTURA,F001-00015,Servicios Electricos SAC,2026-08-16,250.00,45.00,295.00,ORD-020,Mantenimiento de luminarias,1
+BOLETA,B001-00458,Limpieza Total EIRL,2026-08-16,180.00,0.00,180.00,ORD-021,Materiales de limpieza,

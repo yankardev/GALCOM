@@ -1,0 +1,65 @@
+<div class="shell" [class.compact-shell]="compact()">
+  <aside class="sidebar" [class.open]="menuOpen()" [class.compact]="compact()">
+    <div class="brand">
+      <div class="brand-mark">G</div>
+      <div class="brand-copy">
+        <strong>GALCOM</strong>
+        <small>Galería Comercial</small>
+      </div>
+      <button class="collapse-btn" type="button" (click)="toggleCompact()" aria-label="Contraer menú">‹</button>
+    </div>
+
+    <nav>
+      <a routerLink="/dashboard" routerLinkActive="active" (click)="closeMenu()"><span class="nav-icon">▦</span><span>Dashboard</span></a>
+
+      @if (auth.session()?.rol === 'ADMINISTRADOR') {
+        <p>ADMINISTRACIÓN</p>
+        <a routerLink="/socios" routerLinkActive="active" (click)="closeMenu()"><span class="nav-icon">◎</span><span>Socios</span></a>
+        <a routerLink="/puestos" routerLinkActive="active" (click)="closeMenu()"><span class="nav-icon">▤</span><span>Puestos</span></a>
+        <a routerLink="/giros" routerLinkActive="active" (click)="closeMenu()"><span class="nav-icon">◇</span><span>Giros comerciales</span></a>
+        <a routerLink="/servicios" routerLinkActive="active" (click)="closeMenu()"><span class="nav-icon">◌</span><span>Servicios</span></a>
+        <a routerLink="/bancos" routerLinkActive="active" (click)="closeMenu()"><span class="nav-icon">▣</span><span>Bancos</span></a>
+      }
+
+      <p>CAJA Y COBRANZA</p>
+      <a routerLink="/cuentas" routerLinkActive="active" (click)="closeMenu()"><span class="nav-icon">$</span><span>Cuentas por cobrar</span></a>
+      <a routerLink="/cobranza" routerLinkActive="active" (click)="closeMenu()"><span class="nav-icon">✓</span><span>Registrar pago</span></a>
+      <a routerLink="/ingresos" routerLinkActive="active" (click)="closeMenu()"><span class="nav-icon">↓</span><span>Ingresos externos</span></a>
+      <a routerLink="/egresos" routerLinkActive="active" (click)="closeMenu()"><span class="nav-icon">↑</span><span>Egresos</span></a>
+
+      <p>COMPROBANTES</p>
+      <a routerLink="/recibos" routerLinkActive="active" (click)="closeMenu()"><span class="nav-icon">▧</span><span>Recibos</span></a>
+      <a routerLink="/reportes" routerLinkActive="active" (click)="closeMenu()"><span class="nav-icon">▥</span><span>Reportes</span></a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="avatar">{{ (auth.session()?.nombres || 'U').charAt(0) }}</div>
+      <div class="profile-copy">
+        <strong>{{ auth.session()?.nombres }} {{ auth.session()?.apellidos }}</strong>
+        <small>{{ auth.session()?.rol }}</small>
+      </div>
+      <button class="exit-btn" type="button" (click)="exit()" title="Cerrar sesión">↪</button>
+    </div>
+  </aside>
+
+  @if (menuOpen()) { <button class="overlay" type="button" (click)="closeMenu()" aria-label="Cerrar menú"></button> }
+
+  <main>
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="mobile-menu" type="button" (click)="toggleMenu()">☰</button>
+        <div>
+          <strong>Gestión Administrativa y de Caja</strong>
+          <small>Control integral de la galería comercial</small>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <span class="status-dot"></span>
+        <span>Sesión activa</span>
+        <div class="user-chip">{{ auth.session()?.usuario }}</div>
+      </div>
+    </header>
+
+    <section class="content"><router-outlet /></section>
+  </main>
+</div>

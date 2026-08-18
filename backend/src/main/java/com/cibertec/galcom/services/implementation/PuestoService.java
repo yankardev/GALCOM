@@ -58,7 +58,11 @@ public class PuestoService implements IPuestoService {
     }
 
     private void mapearDatos(PuestoEntity entity, Puesto puesto) {
-        entity.setNumero(puesto.getNumero());
+        if (puesto.getVigenciaInicio() != null && puesto.getVigenciaFin() != null
+                && puesto.getVigenciaFin().isBefore(puesto.getVigenciaInicio())) {
+            throw new IllegalArgumentException("La fecha fin de vigencia no puede ser anterior a la fecha de inicio");
+        }
+        entity.setNumero(puesto.getNumero().trim());
         entity.setUbicacion(puesto.getUbicacion());
         entity.setInquilinoNombre(puesto.getInquilinoNombre());
         entity.setInquilinoDocumento(puesto.getInquilinoDocumento());

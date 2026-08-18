@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,15 +15,33 @@ public interface ICuentaPorCobrarRepository extends JpaRepository<CuentaPorCobra
     @Query("""
         SELECT c FROM CuentaPorCobrarEntity c JOIN FETCH c.servicio
         LEFT JOIN FETCH c.socio LEFT JOIN FETCH c.puesto
+        ORDER BY c.id DESC
     """)
     List<CuentaPorCobrarEntity> findAllConRelaciones();
+
     @Query("""
-        SELECT c
-        FROM CuentaPorCobrarEntity c JOIN FETCH c.servicio
+        SELECT c FROM CuentaPorCobrarEntity c JOIN FETCH c.servicio
         LEFT JOIN FETCH c.socio LEFT JOIN FETCH c.puesto
         WHERE c.id = :id
     """)
     Optional<CuentaPorCobrarEntity> findByIdConRelaciones(@Param("id") Long id);
+
+    @Query("""
+        SELECT c FROM CuentaPorCobrarEntity c JOIN FETCH c.servicio
+        LEFT JOIN FETCH c.socio LEFT JOIN FETCH c.puesto
+        WHERE c.socio.id = :socioId
+        ORDER BY c.fechaVencimiento DESC, c.id DESC
+    """)
+    List<CuentaPorCobrarEntity> findBySocioConRelaciones(@Param("socioId") Long socioId);
+
+    @Query("""
+        SELECT c FROM CuentaPorCobrarEntity c JOIN FETCH c.servicio
+        LEFT JOIN FETCH c.socio LEFT JOIN FETCH c.puesto
+        WHERE c.puesto.id = :puestoId
+        ORDER BY c.fechaVencimiento DESC, c.id DESC
+    """)
+    List<CuentaPorCobrarEntity> findByPuestoConRelaciones(@Param("puestoId") Long puestoId);
+
     @Query("""
         SELECT COUNT(c) > 0 FROM CuentaPorCobrarEntity c
         WHERE c.servicio.id = :servicioId AND c.puesto.id = :puestoId AND c.periodo = :periodo
@@ -30,8 +49,13 @@ public interface ICuentaPorCobrarRepository extends JpaRepository<CuentaPorCobra
     boolean existeCuentaPuestoPeriodo(@Param("servicioId") Long servicioId, @Param("puestoId") Long puestoId, @Param("periodo") String periodo);
 
     @Query("""
-            SELECT COUNT(c) > 0 FROM CuentaPorCobrarEntity c WHERE c.servicio.id = :servicioId
-            AND c.socio.id = :socioId AND c.periodo = :periodo
-            """)
+        SELECT COUNT(c) > 0 FROM CuentaPorCobrarEntity c
+        WHERE c.servicio.id = :servicioId AND c.socio.id = :socioId AND c.periodo = :periodo
+    """)
     boolean existeCuentaSocioPeriodo(@Param("servicioId") Long servicioId, @Param("socioId") Long socioId, @Param("periodo") String periodo);
+
+    long countByEstado(String estado);
+
+    @Query("SELECT COALESCE(SUM(c.monto), 0) FROM CuentaPorCobrarEntity c WHERE c.estado = 'PENDIENTE'")
+    BigDecimal totalPendiente();
 }

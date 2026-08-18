@@ -15,7 +15,7 @@ Thumbs.db
 # VS Code
 .vscode/
 
-# Angular - para después
+# Angular
 node_modules/
 dist/
 

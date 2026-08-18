@@ -3,6 +3,7 @@ package com.cibertec.galcom.models;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
+import jakarta.validation.constraints.Pattern;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -19,6 +20,7 @@ public class GenerarCuentasPuestosRequest {
     private Long servicioId;
 
     @NotBlank(message = "El periodo es obligatorio")
+    @Pattern(regexp = "^[0-9]{4}-(0[1-9]|1[0-2])$", message = "El periodo debe tener formato AAAA-MM")
     private String periodo;
 
     @PositiveOrZero(message = "El monto no puede ser negativo")

@@ -18,6 +18,7 @@ public class GenerarCuentasSociosRequest {
     private Long servicioId;
 
     @NotBlank(message = "El periodo es obligatorio")
+    @Pattern(regexp = "^[0-9]{4}-(0[1-9]|1[0-2])$", message = "El periodo debe tener formato AAAA-MM")
     private String periodo;
 
     @PositiveOrZero(message = "El monto no puede ser negativo")

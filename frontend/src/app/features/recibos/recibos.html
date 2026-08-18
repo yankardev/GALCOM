@@ -1,0 +1,91 @@
+<div class="page-title">
+    <div>
+        <h1>Recibos y comprobantes</h1>
+        <p>Consulta diaria de ingresos, egresos y movimientos bancarios</p>
+    </div>
+</div>
+<section class="card filters-card"><label><span>Fecha</span><input class="control" type="date" [value]="fecha"
+            (change)="fecha=$any($event.target).value"></label><label><span>Tipo</span><select class="control"
+            [value]="tipo" (change)="tipo=$any($event.target).value">
+            <option>TODOS</option>
+            <option>INGRESO</option>
+            <option>EGRESO</option>
+            <option>BANCARIO</option>
+        </select></label><button class="btn primary" (click)="load()">Consultar</button></section>
+@if(error()){<p class="notice bad">{{error()}}</p>}
+<section class="card table-card">
+    <div class="head">
+        <div>
+            <h2>Comprobantes del día</h2>
+            <p>{{rows().length}} registros encontrados</p>
+        </div>
+    </div>
+    <div class="table-wrap">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Correlativo</th>
+                    <th>Tipo</th>
+                    <th>Responsable</th>
+                    <th>Fecha</th>
+                    <th>Método</th>
+                    <th>Monto</th>
+                    <th>Estado</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>@for(r of rows();track r.id){<tr>
+                    <td><strong>{{r.numeroCorrelativo}}</strong></td>
+                    <td><span class="badge" [class.success]="clase(r.tipo)==='success'"
+                            [class.info]="clase(r.tipo)==='info'"
+                            [class.danger]="clase(r.tipo)==='danger'">{{r.tipo}}</span></td>
+                    <td>{{responsable(r)}}</td>
+                    <td>{{r.fecha|date:'dd/MM/yyyy HH:mm'}}</td>
+                    <td>{{r.metodoPago||'—'}}</td>
+                    <td class="money">S/ {{r.montoTotal|number:'1.2-2'}}</td>
+                    <td>{{r.estado}}</td>
+                    <td><button class="view-btn" (click)="ver(r)">Ver voucher</button></td>
+                </tr>}@empty{<tr>
+                    <td colspan="8" class="empty">{{loading()?'Consultando...':'No hay comprobantes para la fecha
+                        seleccionada.'}}</td>
+                </tr>}</tbody>
+        </table>
+    </div>
+</section>
+@if(seleccionado()){<div class="modal">
+    <div class="voucher card"><button class="close" (click)="cerrar()">×</button>
+        <div class="voucher-brand"><span>G</span>
+            <div><strong>GALCOM</strong><small>Sistema de Gestión Administrativa y de Caja</small></div>
+        </div>
+        <div class="voucher-title">
+            <div><small>COMPROBANTE</small>
+                <h2>{{seleccionado()!.numeroCorrelativo}}</h2>
+            </div><span class="badge" [class.success]="seleccionado()!.estado==='EMITIDO'"
+                [class.danger]="seleccionado()!.estado==='ANULADO'">{{seleccionado()!.estado}}</span>
+        </div>
+        <div class="meta">
+            <div><span>Tipo</span><b>{{seleccionado()!.tipo}}</b></div>
+            <div><span>Fecha</span><b>{{seleccionado()!.fecha|date:'dd/MM/yyyy HH:mm'}}</b></div>
+            <div><span>Responsable</span><b>{{responsable(seleccionado()!)}}</b></div>
+            <div><span>Método</span><b>{{seleccionado()!.metodoPago||'—'}}</b></div>
+        </div>@if(seleccionado()!.detalles.length){<table class="detail">
+            <thead>
+                <tr>
+                    <th>Servicio</th>
+                    <th>Período</th>
+                    <th>Monto</th>
+                </tr>
+            </thead>
+            <tbody>@for(d of seleccionado()!.detalles;track d.cuentaId){<tr>
+                    <td>{{d.servicio}}</td>
+                    <td>{{d.periodo}}</td>
+                    <td>S/ {{d.montoAplicado|number:'1.2-2'}}</td>
+                </tr>}</tbody>
+        </table>}<div class="total"><span>Total</span><strong>S/ {{seleccionado()!.montoTotal|number:'1.2-2'}}</strong>
+        </div>
+        <div class="foot"><small>Operador: {{seleccionado()!.usuario}}</small>
+            <div><button class="btn" (click)="cerrar()">Cerrar</button><button class="btn primary"
+                    (click)="imprimir()">Imprimir</button></div>
+        </div>
+    </div>
+</div>}
