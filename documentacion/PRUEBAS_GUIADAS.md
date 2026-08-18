@@ -2,7 +2,7 @@
 
 ## Preparación
 
-1. Ejecutar `database/GALCOM_DB_v1.sql` en MySQL.
+1. Ejecutar `database/GALCOM_DB_FINAL.sql` en MySQL.
 2. Configurar `DB_USERNAME` y `DB_PASSWORD` para el backend.
 3. Iniciar Spring Boot en `9090`.
 4. En `frontend`: `npm install` y luego `npm start`.
@@ -75,16 +75,19 @@ Registrar:
 - Tipo: Factura
 - Número: `F001-00245`
 - Proveedor: `Electro Norte SAC`
-- Subtotal: `450.00`
-- Impuesto: `81.00`
+- Monto del comprobante: `590.00`
+- Tratamiento del IGV: `El monto ya incluye IGV`
 - Motivo: `Reparación eléctrica`
 
 Comprobar:
-- Total se muestra automáticamente como `531.00`.
-- No se puede editar el total manualmente.
-- Procesar genera comprobante.
+- Para `590.00` con IGV incluido, el sistema calcula subtotal `500.00`, IGV `90.00` y total `590.00`.
+- Para `500.00` con IGV adicional, calcula subtotal `500.00`, IGV `90.00` y total `590.00`.
+- Para `500.00` con `No aplica IGV`, calcula subtotal `500.00`, IGV `0.00` y total `500.00`.
+- El mismo comprobante del mismo proveedor no puede registrarse dos veces.
+- Procesar genera comprobante y permite ver voucher.
 - Anular actualiza el estado.
-- Importar `database/egresos_ejemplo.csv`.
+- Consultar egresos por mes.
+- Importar `database/egresos_ejemplo.csv` y comprobar que una importación con duplicados se revierte completamente.
 
 ## 9. Recibos
 - Filtrar por fecha y por tipo INGRESO, EGRESO y BANCARIO.
@@ -93,7 +96,7 @@ Comprobar:
 
 ## 10. Reportes
 - Descargar MOVIMIENTOS_DIARIOS por fecha.
-- Descargar TOTALES y MENSUAL por mes.
+- Descargar TOTALES y MENSUAL por mes y comprobar que son reportes distintos.
 - Descargar SOCIOS, NO_SOCIOS, EGRESOS y BANCOS.
 
 ## Validación técnica final
